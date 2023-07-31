@@ -1,13 +1,12 @@
 package com.dillo.commands.UtilCommands;
 
-import static com.dillo.dilloUtils.DilloDriveBlockDetection.getBlocksLayer;
-import static com.dillo.dilloUtils.NewSpinDrive.random;
-import static com.dillo.dilloUtils.Utils.GetMostOptimalPath.getBestPath;
-import static com.dillo.dilloUtils.Utils.LookYaw.curRotation;
+import static com.dillo.main.macro.main.NewSpinDrive.random;
+import static com.dillo.main.utils.looks.LookYaw.curRotation;
+import static com.dillo.utils.BlockUtils.getBlocksLayer;
 
-import com.dillo.data.config;
-import com.dillo.dilloUtils.Utils.GetMostOptimalPath;
-import com.dillo.dilloUtils.Utils.LookYaw;
+import com.dillo.config.config;
+import com.dillo.main.utils.GetMostOptimalPath;
+import com.dillo.main.utils.looks.LookYaw;
 import com.dillo.utils.previous.random.ids;
 import java.util.List;
 import net.minecraft.util.BlockPos;
@@ -49,7 +48,7 @@ public class Test {
 
           float displacement = path.displacement;
 
-          LookYaw.lookToYaw(config.headMovement * 10L, displacement);
+          LookYaw.lookToYaw(config.headMovement * 10L, displacement, false);
 
           first = false;
         }
@@ -58,7 +57,7 @@ public class Test {
           if (angle < 170) {
             float add = config.headMovement * 7 + random.nextFloat() * 10;
 
-            LookYaw.lookToYaw(config.headMovement * 10L, add);
+            LookYaw.lookToYaw(config.headMovement * 10L, add, false);
             angle += add;
           } else {
             angle = 0;

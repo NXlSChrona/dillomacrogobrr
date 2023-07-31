@@ -1,29 +1,9 @@
 package com.dillo;
 
-import static com.dillo.dilloUtils.FailSafes.AnswerPPL.makeAcusation;
+import static com.dillo.main.failsafes.AnswerPPL.makeAcusation;
 
-import com.dillo.ArmadilloMain.ArmadilloMain;
-import com.dillo.Events.*;
-import com.dillo.MITGUI.GUIUtils.CurRatesUtils.GetCurGemPrice;
-import com.dillo.MITGUI.GUIUtils.CurRatesUtils.ItemsPickedUp;
-import com.dillo.MITGUI.GUIUtils.CurTimeVein.CurTime;
-import com.dillo.MITGUI.Overlay;
-import com.dillo.Pathfinding.Brigeros.DestroyBlock;
-import com.dillo.Pathfinding.Brigeros.WalkOnPath;
-import com.dillo.Pathfinding.stevebot.core.StevebotApi;
-import com.dillo.Pathfinding.stevebot.core.data.blocks.BlockLibrary;
-import com.dillo.Pathfinding.stevebot.core.data.blocks.BlockProvider;
-import com.dillo.Pathfinding.stevebot.core.data.blocks.BlockUtils;
-import com.dillo.Pathfinding.stevebot.core.data.items.ItemLibrary;
-import com.dillo.Pathfinding.stevebot.core.data.items.ItemUtils;
-import com.dillo.Pathfinding.stevebot.core.minecraft.MinecraftAdapter;
-import com.dillo.Pathfinding.stevebot.core.minecraft.OpenGLAdapter;
-import com.dillo.Pathfinding.stevebot.core.pathfinding.PathHandler;
-import com.dillo.Pathfinding.stevebot.core.pathfinding.actions.ActionUtils;
-import com.dillo.Pathfinding.stevebot.core.player.*;
-import com.dillo.Pathfinding.stevebot.core.rendering.Renderer;
-import com.dillo.RemoteControl.*;
 import com.dillo.adapter.MinecraftAdapterImpl;
+import com.dillo.calls.ArmadilloMain;
 import com.dillo.commands.*;
 import com.dillo.commands.AnswerCommands.AddAnswer;
 import com.dillo.commands.AnswerCommands.RemoveAccusation;
@@ -36,31 +16,54 @@ import com.dillo.commands.RouteMakerUtils.CalcRouteAvgGemPerc;
 import com.dillo.commands.RouteMakerUtils.CheckIfCanTpToEvery;
 import com.dillo.commands.RouteMakerUtils.GemESP;
 import com.dillo.commands.UtilCommands.*;
+import com.dillo.commands.UtilCommands.Test;
 import com.dillo.commands.baritone.StartAutoSetupWithBaritone;
 import com.dillo.commands.baritone.WalkToBlockWithBaritone;
-import com.dillo.dilloUtils.*;
-import com.dillo.dilloUtils.BlockESP.BlockOnRouteESP;
-import com.dillo.dilloUtils.BlockUtils.JumpLook;
-import com.dillo.dilloUtils.FailSafes.*;
-import com.dillo.dilloUtils.ReFuelDrill.ReFuelDrill;
-import com.dillo.dilloUtils.ReFuelDrill.ReFuelDrillTriger;
-import com.dillo.dilloUtils.ReFuelDrill.ThrowAtEnd;
-import com.dillo.dilloUtils.RouteUtils.AutoSetup.SetupMain;
-import com.dillo.dilloUtils.RouteUtils.LegitRouteClear.LegitRouteClear;
-import com.dillo.dilloUtils.RouteUtils.Nuker.NukerMain;
-import com.dillo.dilloUtils.RouteUtils.PlaceBlocks.PlaceCobbleModule;
-import com.dillo.dilloUtils.RouteUtils.RouteDeletr.RouteDeletrMain;
-import com.dillo.dilloUtils.RouteUtils.ViewClearLines.ViewClearLines;
-import com.dillo.dilloUtils.Teleport.IsOnBlock;
-import com.dillo.dilloUtils.Teleport.TeleportMovePlayer.MoveToVertex;
-import com.dillo.dilloUtils.Teleport.TeleportToBlock;
-import com.dillo.dilloUtils.TpUtils.LookWhileGoingDown;
-import com.dillo.dilloUtils.TpUtils.WaitThenCall;
-import com.dillo.dilloUtils.TpUtils.WalkForward;
-import com.dillo.dilloUtils.Utils.GetOnArmadillo;
+import com.dillo.events.*;
+import com.dillo.gui.GUIUtils.CurRatesUtils.GetCurGemPrice;
+import com.dillo.gui.GUIUtils.CurRatesUtils.ItemsPickedUp;
+import com.dillo.gui.GUIUtils.CurTimeVein.CurTime;
+import com.dillo.gui.Overlay;
 import com.dillo.keybinds.Keybinds;
+import com.dillo.main.esp.route.BlockOnRouteESP;
+import com.dillo.main.failsafes.*;
+import com.dillo.main.failsafes.AminStuff.WarpOutFail;
+import com.dillo.main.failsafes.RouteFailsafes.RemoveBlockFailsafe;
+import com.dillo.main.files.init.CheckFile;
+import com.dillo.main.macro.main.GetOffArmadillo;
+import com.dillo.main.macro.main.NewSpinDrive;
+import com.dillo.main.macro.main.StateDillo;
+import com.dillo.main.macro.refuel.ReFuelDrill;
+import com.dillo.main.macro.refuel.ReFuelDrillTriger;
+import com.dillo.main.macro.refuel.ThrowAtEnd;
+import com.dillo.main.route.AutoSetup.SetupMain;
+import com.dillo.main.route.LegitRouteClear.LegitRouteClear;
+import com.dillo.main.route.MobKiller.MobKillerMain;
+import com.dillo.main.route.Nuker.NukerMain;
+import com.dillo.main.route.PlaceBlocks.PlaceCobbleModule;
+import com.dillo.main.route.RouteDeletr.RouteDeletrMain;
+import com.dillo.main.route.ViewClearLines.ViewClearLines;
+import com.dillo.main.teleport.TeleportMovePlayer.MoveToVertex;
+import com.dillo.main.teleport.utils.*;
+import com.dillo.main.utils.looks.DriveLook;
+import com.dillo.main.utils.looks.LookAt;
+import com.dillo.main.utils.looks.YawLook;
+import com.dillo.pathfinding.Brigeros.DestroyBlock;
+import com.dillo.pathfinding.Brigeros.WalkOnPath;
+import com.dillo.pathfinding.RegistersStevebot;
+import com.dillo.pathfinding.stevebot.core.StevebotApi;
+import com.dillo.pathfinding.stevebot.core.data.blocks.BlockLibrary;
+import com.dillo.pathfinding.stevebot.core.data.blocks.BlockProvider;
+import com.dillo.pathfinding.stevebot.core.data.blocks.BlockUtils;
+import com.dillo.pathfinding.stevebot.core.data.items.ItemLibrary;
+import com.dillo.pathfinding.stevebot.core.data.items.ItemUtils;
+import com.dillo.pathfinding.stevebot.core.minecraft.MinecraftAdapter;
+import com.dillo.pathfinding.stevebot.core.pathfinding.PathHandler;
+import com.dillo.pathfinding.stevebot.core.pathfinding.actions.ActionUtils;
+import com.dillo.pathfinding.stevebot.core.player.*;
+import com.dillo.pathfinding.stevebot.core.rendering.Renderer;
+import com.dillo.remote.*;
 import com.dillo.utils.GetConfigFolder;
-import com.dillo.utils.previous.SendChat;
 import com.dillo.utils.renderUtils.renderModules.*;
 import gg.essential.api.EssentialAPI;
 import gg.essential.api.commands.Command;
@@ -81,7 +84,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -95,14 +97,18 @@ public class armadillomacro {
   private static EventManager eventManager;
   private static ModEventProducer eventProducer;
   private static BlockLibrary blockLibrary;
-  private static BlockProvider blockProvider;
+  public static BlockProvider blockProvider;
   private static ItemLibrary itemLibrary;
-  private static PlayerCamera playerCamera;
+  public static PlayerCamera playerCamera;
   private static PlayerMovement playerMovement;
-  private static PlayerInput playerInput;
+  public static PlayerInput playerInput;
   private static PlayerInventory playerInventory;
-  private static Renderer renderer;
-  private static PathHandler pathHandler;
+  public static MobKillerMain mobKiller = new MobKillerMain();
+  public static Renderer renderer;
+  public static PathHandler pathHandler;
+  public static RouteDeletrMain destroyer = new RouteDeletrMain();
+
+  public static MoveToVertex vertexMover = new MoveToVertex();
 
   public static File modFile = null;
 
@@ -111,14 +117,13 @@ public class armadillomacro {
   @Mod.EventHandler
   public void init(FMLInitializationEvent event) {
     Display.setTitle("MiningInTwo");
+
     CheckFile.checkFiles();
     keybinds.add(new KeyBinding("Enable Macro", Keyboard.KEY_NONE, "Mining In Two"));
     keybinds.add(new KeyBinding("Enable Nuker", Keyboard.KEY_NONE, "Mining In Two"));
     keybinds.add(new KeyBinding("Quick View Structures", Keyboard.KEY_NONE, "Mining In Two"));
     keybinds.add(new KeyBinding("Add Point", Keyboard.KEY_NONE, "Mining In Two"));
     keybinds.add(new KeyBinding("Test Key", Keyboard.KEY_NONE, "Mining In Two"));
-
-    RouteDeletrMain destroyer = new RouteDeletrMain();
 
     // Comment
 
@@ -164,7 +169,6 @@ public class armadillomacro {
       new LookAt(),
       new ArmadilloMain(),
       new StateDillo(),
-      new JumpLook(),
       new RenderSingleLineTwoPoints(),
       new RenderOneBlockMod(),
       new RenderMultipleBlocksMod(),
@@ -192,7 +196,6 @@ public class armadillomacro {
       new UsePathfinderInstead(),
       new NukerMain(),
       new Overlay(),
-      new GetOnArmadillo(),
       new CurTime(),
       new StructurePoints(),
       new LegitRouteClear(),
@@ -210,19 +213,26 @@ public class armadillomacro {
       new TeleportToBlock(),
       new PlaceCobbleModule(),
       new SetupMain(),
-      destroyer
+      destroyer,
+      vertexMover,
+      mobKiller,
+      new WarpOutFail(),
+      new RemoveBlockFailsafe(),
+      new RegistersStevebot(),
+      new PlayerLocChangeTrigger(),
+      new com.dillo.main.teleport.utils.Test(),
+      new NewSpinDrive()
     );
 
     registerKeybinds(keybinds);
     makeAcusation(new File(GetConfigFolder.getMcDir() + "/MiningInTwo/chatAnswers.json"));
 
     new Thread(GetCurGemPrice::getCurrGemPrice).start();
+    //////////////////////////////////
+    // STEVEBOT PATHFINDING MODULE  //
+    /////////////////////////////////
 
-    //////////////////////////////
-    // STEVE PATHFINDING MODULE //
-    //////////////////////////////
-
-    setup();
+    eventProducer.onInit();
   }
 
   private void setup() {
@@ -264,7 +274,7 @@ public class armadillomacro {
     //renderer = new Renderer(openGLAdapter, blockProvider);
 
     // player camera
-    //playerCamera = new PlayerCamera(minecraftAdapter);
+    playerCamera = new PlayerCamera(minecraftAdapter);
 
     // player input
     playerInput = new PlayerInput(minecraftAdapter);
@@ -280,7 +290,6 @@ public class armadillomacro {
 
     // path handler
     pathHandler = new PathHandler(minecraftAdapter, renderer);
-
     EssentialAPI.getCommandRegistry().registerCommand(new WalkToCustom(new StevebotApi(pathHandler)));
   }
 
@@ -303,10 +312,16 @@ public class armadillomacro {
       1,
       TimeUnit.MILLISECONDS
     );
+
+    eventProducer.onPostInit();
+    itemLibrary.insertBlocks(blockLibrary.getAllBlocks());
+    blockLibrary.insertItems(itemLibrary.getAllItems());
   }
 
   @Mod.EventHandler
   public void preInit(FMLPreInitializationEvent event) {
+    setup();
+    eventProducer.onPreInit();
     modFile = event.getSourceFile();
   }
 
@@ -376,7 +391,9 @@ public class armadillomacro {
 
       @Override
       public void onEvent(TickEvent.RenderTickEvent event) {
-        playerCamera.onRenderTickEvent(event.phase == TickEvent.Phase.START);
+        try {
+          playerCamera.onRenderTickEvent(event.phase == TickEvent.Phase.START);
+        } catch (NullPointerException e) {}
       }
     };
 
@@ -389,7 +406,6 @@ public class armadillomacro {
 
       @Override
       public void onEvent(TickEvent.ClientTickEvent event) {
-        SendChat.chat("!!!");
         pathHandler.onEventClientTick();
       }
     };
@@ -402,7 +418,9 @@ public class armadillomacro {
 
     @Override
     public void onEvent(RenderWorldLastEvent event) {
-      renderer.onEventRender(PlayerUtils.getPlayerPosition());
+      try {
+        renderer.onEventRender(PlayerUtils.getPlayerPosition());
+      } catch (NullPointerException e) {}
     }
   };
 

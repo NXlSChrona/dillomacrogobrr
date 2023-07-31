@@ -1,9 +1,7 @@
 package com.dillo.commands.baritone;
 
-import static com.dillo.dilloUtils.RouteUtils.AutoSetup.SetupMain.isTurnedOn;
-
-import com.dillo.dilloUtils.BlockUtils.fileUtils.localizedData.currentRoute;
-import com.dillo.dilloUtils.RouteUtils.AutoSetup.SetupMain;
+import com.dillo.main.files.localizedData.currentRoute;
+import com.dillo.main.route.AutoSetup.SetupMain;
 import com.dillo.utils.previous.SendChat;
 import com.dillo.utils.previous.random.ids;
 import gg.essential.api.commands.Command;
@@ -23,10 +21,10 @@ public class StartAutoSetupWithBaritone extends Command {
       ids.mc.thePlayer.getCurrentEquippedItem().getDisplayName().toLowerCase().contains("drill") &&
       currentRoute.currentRoute.size() > 0
     ) {
-      isTurnedOn = !isTurnedOn;
-      if (!isTurnedOn) main.reset();
+      main.isTurnedOn = !main.isTurnedOn;
+      if (!main.isTurnedOn) main.reset();
     }
 
-    SendChat.chat(isTurnedOn ? "Starting!" : "DONE");
+    SendChat.chat(main.isTurnedOn ? "Starting!" : "DONE");
   }
 }
