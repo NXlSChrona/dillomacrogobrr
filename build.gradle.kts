@@ -11,9 +11,7 @@ group = "com.armadillomacro.archloomtemplate"
 version = "1.0.0"
 
 // Toolchains:
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
-}
+// removed 
 
 // Minecraft configuration:
 loom {
